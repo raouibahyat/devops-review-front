@@ -1,0 +1,75 @@
+<div class="login-page">
+  <!-- Grid background -->
+  <div class="grid-bg"></div>
+
+  <!-- Robot / AI illustration side -->
+  <div class="robot-side">
+    <div class="robot-circle">
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <!-- Head -->
+        <rect x="30" y="25" width="60" height="50" rx="10" fill="#141e2e" stroke="#00d68f" stroke-width="1.5"/>
+        <!-- Eyes -->
+        <circle cx="47" cy="47" r="7" fill="#111" stroke="#378ADD" stroke-width="1.5"/>
+        <circle cx="73" cy="47" r="7" fill="#111" stroke="#7F77DD" stroke-width="1.5"/>
+        <circle cx="47" cy="47" r="3" fill="#378ADD"/>
+        <circle cx="73" cy="47" r="3" fill="#7F77DD"/>
+        <!-- Mouth grill -->
+        <rect x="40" y="60" width="40" height="8" rx="3" fill="#1e3a5f"/>
+        <line x1="50" y1="60" x2="50" y2="68" stroke="#00d68f" stroke-width="0.8"/>
+        <line x1="60" y1="60" x2="60" y2="68" stroke="#00d68f" stroke-width="0.8"/>
+        <line x1="70" y1="60" x2="70" y2="68" stroke="#00d68f" stroke-width="0.8"/>
+        <!-- Antenna -->
+        <line x1="60" y1="25" x2="60" y2="12" stroke="#00d68f" stroke-width="1.5"/>
+        <circle cx="60" cy="10" r="3" fill="#00d68f"/>
+        <!-- Body -->
+        <rect x="38" y="75" width="44" height="30" rx="6" fill="#141e2e" stroke="#1e3a5f" stroke-width="1"/>
+        <circle cx="60" cy="90" r="6" fill="#1e3a5f" stroke="#00d68f" stroke-width="1"/>
+        <!-- Arms -->
+        <rect x="20" y="78" width="18" height="10" rx="4" fill="#141e2e" stroke="#1e3a5f" stroke-width="1"/>
+        <rect x="82" y="78" width="18" height="10" rx="4" fill="#141e2e" stroke="#1e3a5f" stroke-width="1"/>
+      </svg>
+    </div>
+    <div class="status-row">
+      <span class="dot green"></span><span>READY</span>
+      <span class="dot blue"></span><span>NEW_USER</span>
+    </div>
+    <div class="brand-text">DevOps<br/><span>Review AI</span></div>
+  </div>
+
+  <!-- Form side -->
+  <div class="form-card">
+    <div class="form-header">
+      <div class="logo-badge">CR</div>
+      <div>
+        <div class="logo-title"><strong>Code</strong>Review <span class="accent">AI</span></div>
+        <div class="secure-badge"><span class="dot-sm green"></span> SECURE</div>
+      </div>
+    </div>
+
+    <p class="sub">Connexion à votre espace DevOps</p>
+
+    <div class="field">
+      <label class="cyber-label">Nom d'utilisateur</label>
+      <input class="cyber-input" type="text" placeholder="john_dev"
+             [(ngModel)]="username" [ngModel]="username()" (ngModelChange)="username.set($event)"/>
+    </div>
+
+    <div class="field">
+      <label class="cyber-label">Mot de passe</label>
+      <input class="cyber-input" type="password" placeholder="••••••••"
+             [(ngModel)]="password" [ngModel]="password()" (ngModelChange)="password.set($event)"/>
+    </div>
+
+    @if (error()) {
+      <div class="error-msg">{{ error() }}</div>
+    }
+
+    <button class="btn-accent" (click)="onSubmit()" [disabled]="loading()">
+      {{ loading() ? 'Connexion...' : 'Se connecter →' }}
+    </button>
+
+    <a class="link" routerLink="/auth/register">
+      Pas de compte ? <span>S'inscrire</span>
+    </a>
+  </div>
+</div>
