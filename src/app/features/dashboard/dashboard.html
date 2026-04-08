@@ -1,1 +1,737 @@
-<p>dashboard works!</p>
+
+<div class="dash-page">
+  <div class="dots-bg"></div>
+
+
+  <div class="topbar">
+    <div class="logo-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+        <path d="M2 17l10 5 10-5"/>
+        <path d="M2 12l10 5 10-5"/>
+      </svg>
+    </div>
+    <div>
+      <div class="logo-name">Offline<span>Review</span> · DevOps</div>
+      <div class="logo-ver"></div>
+    </div>
+    <div class="topbar-right">
+      <div class="chip"><span class="dot grn"></span>online</div>
+      <div class="chip"><span class="dot vio"></span>mock data</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SEARCH BAR
+  ══════════════════════════════════════════════════════════ -->
+  <div [formGroup]="filterForm" class="search-bar">
+
+    <!-- Projet -->
+    <div class="sf proj-dd">
+      <label>Project name / ID</label>
+      <input
+        type="text"
+        formControlName="projectQuery"
+        placeholder="web-app-backend, 102…"
+        (input)="onProjectInput($event)"
+        (blur)="closeDropdown()"
+        autocomplete="off"
+      />
+      @if (showDropdown) {
+        <div class="dd-list">
+          @for (p of projectSuggestions; track p.id) {
+            <div class="dd-item" (mousedown)="selectProject(p)">
+              <strong>{{ p.name }}</strong>
+              <span class="dd-id">#{{ p.id }}</span>
+              <small>{{ p.namespace.name }} · {{ p.description }}</small>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Date from -->
+    <div class="sf">
+      <label>From</label>
+      <input type="date" formControlName="dateFrom" />
+    </div>
+
+    <!-- Date to -->
+    <div class="sf">
+      <label>To</label>
+      <input type="date" formControlName="dateTo" />
+    </div>
+
+    <!-- Pipeline status -->
+    <div class="sf">
+      <label>Pipeline status</label>
+      <select formControlName="pipelineStatus">
+        <option value="all">All</option>
+        <option value="success">Success</option>
+        <option value="failed">Failed</option>
+        <option value="running">Running</option>
+        <option value="canceled">Canceled</option>
+      </select>
+    </div>
+
+    <!-- MR state -->
+    <div class="sf">
+      <label>MR state</label>
+      <select formControlName="mrState">
+        <option value="all">All</option>
+        <option value="opened">Opened</option>
+        <option value="merged">Merged</option>
+        <option value="closed">Closed</option>
+      </select>
+    </div>
+
+    <button type="button" class="btn-search" [disabled]="loading" (click)="search()">
+      @if (!loading) {
+        <span>Search →</span>
+      } @else {
+        <span class="btn-spinner"></span>
+      }
+    </button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       EMPTY STATE
+  ══════════════════════════════════════════════════════════ -->
+  @if (!searched && !loading) {
+    <div class="empty-state">
+      <svg viewBox="0 0 48 48" fill="none" stroke="#334155" stroke-width="1.5">
+        <path d="M24 4L4 14l20 10 20-10L24 4z"/>
+        <path d="M4 34l20 10 20-10"/>
+        <path d="M4 24l20 10 20-10"/>
+      </svg>
+      <p>// enter a project and click search to load metrics</p>
+    </div>
+  }
+
+  <!-- ═══════════════════════════════════════════════════════
+       LOADING
+  ══════════════════════════════════════════════════════════ -->
+  @if (loading) {
+    <div class="loading-state">
+      <div class="loader-ring"></div>
+      <p>loading metrics…</p>
+    </div>
+  }
+
+  <!-- ═══════════════════════════════════════════════════════
+       DASHBOARD CONTENT
+  ══════════════════════════════════════════════════════════ -->
+  @if (searched && !loading && dashData) {
+    <div class="dash-content">
+
+      <!-- Projet pill -->
+      <div class="proj-pill">
+        <span class="pdot"></span>
+        <strong>{{ project.namespace.name }} / {{ project.name }}</strong>
+        <span class="pid">#{{ project.id }}</span>
+        <span class="pvis">{{ project.visibility }}</span>
+        <span class="pbranch">⎇ {{ project.default_branch }}</span>
+      </div>
+
+      <!-- ── TABS ──────────────────────────────────────────── -->
+      <div class="tabs">
+        @for (tab of TABS; track tab.key) {
+          <button
+            class="tab-btn"
+            [class.active]="activeTab === tab.key"
+            (click)="setTab(tab.key)"
+          >{{ tab.label }}</button>
+        }
+      </div>
+
+      <!-- ══════════════════════════════════════════════════
+           TAB: OVERVIEW
+      ═══════════════════════════════════════════════════ -->
+      @if (activeTab === 'overview') {
+        <div>
+
+          <!-- Stats row -->
+          <div class="stats-row">
+            <div class="sc vio">
+              <div class="lbl">pipelines</div>
+              <div class="val">{{ stats.totalPipelines }}</div>
+              <div class="sub">{{ stats.successPipelines }} passed</div>
+            </div>
+            <div class="sc grn">
+              <div class="lbl">success rate</div>
+              <div class="val">{{ stats.successRate }}%</div>
+              <div class="sub">{{ stats.failedPipelines }} failed</div>
+            </div>
+            <div class="sc">
+              <div class="lbl">avg duration</div>
+              <div class="val sm">{{ formatDuration(stats.avgPipelineDuration) }}</div>
+              <div class="sub">per pipeline</div>
+            </div>
+            <div class="sc vio">
+              <div class="lbl">coverage</div>
+              <div class="val">{{ stats.avgCoverage }}%</div>
+              <div class="sub">avg code cov.</div>
+            </div>
+            <div class="sc amb">
+              <div class="lbl">open MRs</div>
+              <div class="val">{{ stats.openMRs }}</div>
+              <div class="sub">{{ stats.mergedMRs }} merged</div>
+            </div>
+            <div class="sc red">
+              <div class="lbl">open issues</div>
+              <div class="val">{{ stats.openIssues }}</div>
+              <div class="sub">{{ stats.closedIssues }} closed</div>
+            </div>
+            <div class="sc vio">
+              <div class="lbl">deployments</div>
+              <div class="val">{{ stats.totalDeployments }}</div>
+              <div class="sub">{{ deploySuccessRate() }}% success</div>
+            </div>
+            <div class="sc">
+              <div class="lbl">packages</div>
+              <div class="val">{{ stats.totalPackages }}</div>
+              <div class="sub">{{ stats.totalMembers }} members</div>
+            </div>
+          </div>
+
+          <!-- Row 1: Pipeline health + Coverage trend -->
+          <div class="grid2">
+
+            <!-- Pipeline health -->
+            <div class="card">
+              <div class="card-title">// pipeline health</div>
+
+              <div class="bar-wrap">
+                <div class="bar-lbl"><span>success</span><span>{{ stats.successRate }}%</span></div>
+                <div class="bar-track"><div class="bar-fill grn" [style.width.%]="stats.successRate"></div></div>
+              </div>
+              <div class="bar-wrap">
+                <div class="bar-lbl">
+                  <span>failed</span>
+                  <span>{{ stats.totalPipelines ? (stats.failedPipelines / stats.totalPipelines * 100 | number:'1.0-0') : 0 }}%</span>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill red" [style.width.%]="stats.totalPipelines ? stats.failedPipelines / stats.totalPipelines * 100 : 0"></div>
+                </div>
+              </div>
+              <div class="bar-wrap">
+                <div class="bar-lbl">
+                  <span>canceled</span>
+                  <span>{{ stats.totalPipelines ? (stats.canceledPipelines / stats.totalPipelines * 100 | number:'1.0-0') : 0 }}%</span>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill gray" [style.width.%]="stats.totalPipelines ? stats.canceledPipelines / stats.totalPipelines * 100 : 0"></div>
+                </div>
+              </div>
+
+              <div class="card-title" style="margin-top:16px;">// daily trend</div>
+              <div class="legend-row">
+                <span><span class="leg-sq grn"></span>success</span>
+                <span><span class="leg-sq red"></span>failed</span>
+                <span><span class="leg-sq gray"></span>canceled</span>
+              </div>
+              <div class="chart-wrap">
+                <canvas #pipelineChartRef role="img" aria-label="Pipeline trend bar chart"></canvas>
+              </div>
+            </div>
+
+            <!-- Coverage + MR doughnut -->
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div class="card" style="flex:1;">
+                <div class="card-title">// code coverage trend</div>
+                <div class="chart-wrap">
+                  <canvas #coverageChartRef role="img" aria-label="Code coverage trend line chart"></canvas>
+                </div>
+              </div>
+              <div class="card" style="flex:1;">
+                <div class="card-title">// merge requests</div>
+                <div style="display:flex;align-items:center;gap:16px;">
+                  <div class="chart-wrap donut">
+                    <canvas #mrChartRef role="img" aria-label="MR status doughnut chart"></canvas>
+                  </div>
+                  <div class="donut-legend">
+                    <div class="dl-row"><span class="dl-dot grn"></span><span class="dl-lbl">Merged</span><span class="dl-val">{{ stats.mergedMRs }}</span></div>
+                    <div class="dl-row"><span class="dl-dot vio"></span><span class="dl-lbl">Open</span><span class="dl-val">{{ stats.openMRs }}</span></div>
+                    <div class="dl-row"><span class="dl-dot gray"></span><span class="dl-lbl">Closed</span><span class="dl-val">{{ stats.closedMRs }}</span></div>
+                    <div class="dl-row"><span class="dl-dot amber"></span><span class="dl-lbl">Drafts</span><span class="dl-val">{{ stats.draftMRs }}</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: Recent pipelines + Recent commits -->
+          <div class="grid2">
+
+            <!-- Recent pipelines -->
+            <div class="card">
+              <div class="card-title">// recent pipelines</div>
+              <div class="pipe-row header-row">
+                <span style="flex:0 0 80px;">status</span>
+                <span style="flex:1;">branch</span>
+                <span style="flex:0 0 60px;">duration</span>
+                <span style="flex:0 0 60px;">date</span>
+              </div>
+              @for (p of pipelines.slice(0, 8); track p.id) {
+                <div class="pipe-row">
+                  <span class="badge" [ngClass]="statusClass(p.status)" style="flex:0 0 80px;">{{ p.status }}</span>
+                  <span class="ref" style="flex:1;">{{ p.ref }}</span>
+                  <span class="dur" style="flex:0 0 60px;">{{ formatDuration(p.duration) }}</span>
+                  <span class="dt"  style="flex:0 0 60px;">{{ p.created_at.slice(5,10) }}</span>
+                </div>
+              }
+              @if (pipelines.length === 0) {
+                <div class="empty-row">// no pipelines in range</div>
+              }
+            </div>
+
+            <!-- Recent commits -->
+            <div class="card">
+              <div class="card-title">// recent commits</div>
+              @for (c of commits.slice(0, 8); track c.id) {
+                <div class="commit-row">
+                  <span class="commit-type" [ngClass]="commitTypeClass(c.title)">{{ commitTypeClass(c.title) }}</span>
+                  <div class="commit-info">
+                    <div class="commit-title">{{ c.title }}</div>
+                    <div class="commit-meta">{{ c.author_name }} · {{ c.short_id }} · +{{ c.stats?.additions }} -{{ c.stats?.deletions }}</div>
+                  </div>
+                  <span class="dt">{{ c.authored_date.slice(5,10) }}</span>
+                </div>
+              }
+              @if (commits.length === 0) {
+                <div class="empty-row">// no commits in range</div>
+              }
+            </div>
+          </div>
+
+          <!-- Row 3: Environments + Runners -->
+          <div class="grid2">
+
+            <!-- Environments -->
+            <div class="card">
+              <div class="card-title">// environments ({{ dashData.environments.length }})</div>
+              @for (e of dashData.environments; track e.id) {
+                <div class="env-row">
+                  <div class="env-main">
+                    <span class="badge" [ngClass]="statusClass(e.state)">{{ e.state }}</span>
+                    <span class="env-name">{{ e.name }}</span>
+                  </div>
+                  <div class="env-meta">
+                    @if (e.last_deployment) {
+                      <span class="dt">deploy #{{ e.last_deployment.id }} · pipeline #{{ e.last_deployment.deployable.pipeline.id }}</span>
+                    }
+                    @if (e.external_url) {
+                      <a class="env-link" [href]="e.external_url">{{ e.external_url }}</a>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+
+            <!-- Runners -->
+            <div class="card">
+              <div class="card-title">// runners ({{ dashData.runners.length }})</div>
+              @for (r of dashData.runners; track r.id) {
+                <div class="runner-row">
+                  <span class="badge" [ngClass]="statusClass(r.status)">{{ r.status }}</span>
+                  <div class="runner-info">
+                    <div class="runner-name">{{ r.description }}</div>
+                    <div class="runner-meta">{{ r.runner_type }} · {{ r.is_shared ? 'shared' : 'dedicated' }} · {{ r.tag_list.join(', ') || 'no tags' }}</div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Row 4: Members + Packages -->
+          <div class="grid2">
+
+            <!-- Members -->
+            <div class="card">
+              <div class="card-title">// group members ({{ stats.totalMembers }})</div>
+              @for (m of members; track m.id) {
+                <div class="mem-row">
+                  <img class="av" [src]="m.avatar_url" [alt]="m.name"
+                       onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+                  <div class="av-f" style="display:none;">{{ initials(m.name) }}</div>
+                  <div class="mem-info">
+                    <div class="mem-name">{{ m.name }}</div>
+                    <div class="mem-user">@{{ m.username }}</div>
+                  </div>
+                  <span class="role" [ngClass]="accessClass(m.access_level)">{{ accessLabel(m.access_level) }}</span>
+                </div>
+              }
+            </div>
+
+            <!-- Latest packages -->
+            <div class="card">
+              <div class="card-title">// latest packages ({{ stats.totalPackages }})</div>
+              @for (p of packages; track p.id) {
+                <div class="pkg-row">
+                  <span class="badge" [ngClass]="p.package_type">{{ p.package_type }}</span>
+                  <span class="pkg-name">{{ p.name }}</span>
+                  <span class="pkg-ver">v{{ p.version }}</span>
+                  <span class="dt">{{ p.created_at.slice(0,10) }}</span>
+                </div>
+              }
+              @if (packages.length === 0) {
+                <div class="empty-row">// no packages in range</div>
+              }
+            </div>
+          </div>
+
+          <!-- Row 5: Contributors -->
+          <div class="card" style="margin-bottom:12px;">
+            <div class="card-title">// contributors</div>
+            <div class="contrib-grid">
+              @for (c of dashData.contributors; track c.email) {
+                <div class="contrib-card">
+                  <img class="av" [src]="'https://i.pravatar.cc/40?u=' + c.email" [alt]="c.name"
+                       onerror="this.style.display='none'"/>
+                  <div class="contrib-name">{{ c.name }}</div>
+                  <div class="contrib-stat"><span class="vio-txt">{{ c.commits }}</span> commits</div>
+                  <div class="contrib-bar">
+                    <div class="cb-fill" [style.width.%]="c.commits / dashData.contributors[0].commits * 100"></div>
+                  </div>
+                  <div class="contrib-changes">
+                    <span class="grn-txt">+{{ c.additions }}</span>
+                    <span class="red-txt">-{{ c.deletions }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+        </div>
+      }
+
+      <!-- ══════════════════════════════════════════════════
+           TAB: PIPELINES
+      ═══════════════════════════════════════════════════ -->
+      @if (activeTab === 'pipelines') {
+        <div>
+          <div class="inline-filters">
+            @for (s of PIPELINE_STATUSES; track s) {
+              <button
+                class="filter-btn"
+                [class.active]="pipelineStatusFilter === s"
+                (click)="pipelineStatusFilter = s">
+                {{ s }}
+              </button>
+            }
+          </div>
+
+          <div class="card">
+            <div class="card-title">// pipelines ({{ filteredPipelines.length }})</div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>ID</th><th>Status</th><th>Branch</th><th>Triggered by</th>
+                    <th>Source</th><th>Coverage</th><th>Duration</th><th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (p of filteredPipelines; track p.id) {
+                    <tr>
+                      <td class="mono">#{{ p.id }}</td>
+                      <td><span class="badge" [ngClass]="statusClass(p.status)">{{ p.status }}</span></td>
+                      <td class="mono ref">{{ p.ref }}</td>
+                      <td>
+                        <div class="user-cell">
+                          <img class="av sm" [src]="p.user.avatar_url" [alt]="p.user.name" onerror="this.style.display='none'"/>
+                          {{ p.user.name }}
+                        </div>
+                      </td>
+                      <td class="mono">{{ p.source }}</td>
+                      <td class="mono">{{ p.coverage ? p.coverage + '%' : '—' }}</td>
+                      <td class="mono">{{ formatDuration(p.duration) }}</td>
+                      <td class="dt">{{ formatDateTime(p.created_at) }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+            @if (filteredPipelines.length === 0) {
+              <div class="empty-row">// no pipelines match the current filters</div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- ══════════════════════════════════════════════════
+           TAB: MERGE REQUESTS
+      ═══════════════════════════════════════════════════ -->
+      @if (activeTab === 'mergerequests') {
+        <div>
+          <div class="inline-filters">
+            @for (s of MR_STATES; track s) {
+              <button class="filter-btn" [class.active]="mrStateFilter === s" (click)="mrStateFilter = s">
+                {{ s }}
+              </button>
+            }
+          </div>
+
+          <div class="card">
+            <div class="card-title">// merge requests ({{ filteredMRs.length }})</div>
+            @for (m of filteredMRs; track m.id) {
+              <div class="mr-card">
+                <div class="mr-header">
+                  <span class="badge" [ngClass]="statusClass(m.state)">{{ m.state }}</span>
+                  @if (m.draft) {
+                    <span class="mr-draft">[draft]</span>
+                  }
+                  <span class="mr-title">!{{ m.iid }} · {{ m.title }}</span>
+                </div>
+                <div class="mr-body">
+                  <div class="mr-meta-row">
+                    <div class="user-cell">
+                      <img class="av sm" [src]="m.author.avatar_url" [alt]="m.author.name" onerror="this.style.display='none'"/>
+                      <span>{{ m.author.name }}</span>
+                    </div>
+                    <span class="mono">{{ m.source_branch }} → {{ m.target_branch }}</span>
+                    <span class="mono">{{ m.changes_count }} files</span>
+                    <span>{{ m.user_notes_count }} comments</span>
+                    <span class="dt">{{ formatDate(m.created_at) }}</span>
+                  </div>
+                  <div class="mr-labels">
+                    @for (l of m.labels; track l) {
+                      <span class="ltag">{{ l }}</span>
+                    }
+                  </div>
+                  @if (m.reviewers.length > 0) {
+                    <div class="mr-reviewers">
+                      <span style="color:#334155;font-size:10px;font-family:monospace;">reviewers:</span>
+                      @for (r of m.reviewers; track r.id) {
+                        <img class="av sm" [src]="r.avatar_url" [alt]="r.name" [title]="r.name" onerror="this.style.display='none'"/>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+            @if (filteredMRs.length === 0) {
+              <div class="empty-row">// no merge requests match the current filters</div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- ══════════════════════════════════════════════════
+           TAB: COMMITS
+      ═══════════════════════════════════════════════════ -->
+      @if (activeTab === 'commits') {
+        <div>
+          <div class="search-inline">
+            <input type="text" placeholder="Search commits…" [(ngModel)]="commitSearch"/>
+          </div>
+          <div class="card">
+            <div class="card-title">// commits ({{ filteredCommits.length }})</div>
+            @for (c of filteredCommits; track c.id) {
+              <div class="commit-full">
+                <div class="commit-row-full">
+                  <span class="commit-type lg" [ngClass]="commitTypeClass(c.title)">{{ commitTypeClass(c.title) }}</span>
+                  <div class="commit-info">
+                    <div class="commit-title">{{ c.title }}</div>
+                    <div class="commit-meta">
+                      <span>{{ c.author_name }}</span>
+                      <span class="mono">{{ c.short_id }}</span>
+                      @if (c.stats) {
+                        <span class="grn-txt">+{{ c.stats.additions }}</span>
+                        <span class="red-txt">-{{ c.stats.deletions }}</span>
+                      }
+                    </div>
+                  </div>
+                  <span class="dt">{{ formatDateTime(c.authored_date) }}</span>
+                </div>
+              </div>
+            }
+            @if (filteredCommits.length === 0) {
+              <div class="empty-row">// no commits found</div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- ══════════════════════════════════════════════════
+           TAB: PACKAGES
+      ═══════════════════════════════════════════════════ -->
+      @if (activeTab === 'packages') {
+        <div>
+          <div class="inline-filters">
+            @for (t of PACKAGE_TYPES; track t) {
+              <button class="filter-btn" [class.active]="packageTypeFilter === t" (click)="packageTypeFilter = t">
+                {{ t }}
+              </button>
+            }
+          </div>
+          <div class="card">
+            <div class="card-title">// packages ({{ filteredPackages.length }})</div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr><th>Type</th><th>Name</th><th>Version</th><th>Published</th><th>Last download</th></tr>
+                </thead>
+                <tbody>
+                  @for (p of filteredPackages; track p.id) {
+                    <tr>
+                      <td><span class="badge" [ngClass]="p.package_type">{{ p.package_type }}</span></td>
+                      <td class="mono">{{ p.name }}</td>
+                      <td class="mono">{{ p.version }}</td>
+                      <td class="dt">{{ formatDate(p.created_at) }}</td>
+                      <td class="dt">{{ p.last_downloaded_at ? formatDate(p.last_downloaded_at) : '—' }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+            @if (filteredPackages.length === 0) {
+              <div class="empty-row">// no packages in range</div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- ══════════════════════════════════════════════════
+           TAB: ISSUES
+      ═══════════════════════════════════════════════════ -->
+      @if (activeTab === 'issues') {
+        <div>
+          <div class="inline-filters">
+            @for (s of ISSUE_STATES; track s) {
+              <button class="filter-btn" [class.active]="issueStateFilter === s" (click)="issueStateFilter = s">
+                {{ s }}
+              </button>
+            }
+          </div>
+          <div class="card">
+            <div class="card-title">// issues ({{ filteredIssues.length }})</div>
+            @for (i of filteredIssues; track i.id) {
+              <div class="issue-row">
+                <span class="badge" [ngClass]="statusClass(i.state)">{{ i.state }}</span>
+                <div class="issue-info">
+                  <div class="issue-title">#{{ i.iid }} · {{ i.title }}</div>
+                  <div class="issue-meta">
+                    <div class="user-cell">
+                      <img class="av sm" [src]="i.author.avatar_url" [alt]="i.author.name" onerror="this.style.display='none'"/>
+                      {{ i.author.name }}
+                    </div>
+                    <span>{{ i.user_notes_count }} comments</span>
+                    <span class="grn-txt">↑{{ i.upvotes }}</span>
+                    <span class="dt">{{ formatDate(i.created_at) }}</span>
+                    @if (i.due_date) {
+                      <span class="due">due {{ i.due_date }}</span>
+                    }
+                    @for (l of i.labels; track l) {
+                      <span class="ltag">{{ l }}</span>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+            @if (filteredIssues.length === 0) {
+              <div class="empty-row">// no issues found</div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- ══════════════════════════════════════════════════
+           TAB: ENVIRONMENTS
+      ═══════════════════════════════════════════════════ -->
+      @if (activeTab === 'environments') {
+        <div>
+          <div class="grid2">
+            @for (e of dashData.environments; track e.id) {
+              <div class="card env-detail-card">
+                <div class="env-detail-header">
+                  <span class="badge" [ngClass]="statusClass(e.state)">{{ e.state }}</span>
+                  <span class="env-name lg">{{ e.name }}</span>
+                </div>
+                <div class="env-detail-body">
+                  @if (e.external_url) {
+                    <div class="kv-row">
+                      <span class="kv-key">URL</span>
+                      <a class="env-link" [href]="e.external_url">{{ e.external_url }}</a>
+                    </div>
+                  }
+                  @if (e.last_deployment; as d) {
+                    <div class="kv-row">
+                      <span class="kv-key">last deploy</span>
+                      <span class="mono">#{{ d.id }} — {{ d.status }}</span>
+                    </div>
+                    <div class="kv-row">
+                      <span class="kv-key">pipeline</span>
+                      <span class="mono">#{{ d.deployable.pipeline.id }}</span>
+                    </div>
+                    <div class="kv-row">
+                      <span class="kv-key">date</span>
+                      <span class="dt">{{ formatDateTime(d.created_at) }}</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Deployments table -->
+          <div class="card" style="margin-top:12px;">
+            <div class="card-title">// deployments history ({{ dashData.deployments.length }})</div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr><th>ID</th><th>Status</th><th>Environment</th><th>Branch</th><th>By</th><th>Date</th></tr>
+                </thead>
+                <tbody>
+                  @for (d of dashData.deployments; track d.id) {
+                    <tr>
+                      <td class="mono">#{{ d.id }}</td>
+                      <td><span class="badge" [ngClass]="statusClass(d.status)">{{ d.status }}</span></td>
+                      <td class="mono">{{ d.environment.name }}</td>
+                      <td class="mono ref">{{ d.ref }}</td>
+                      <td>
+                        <div class="user-cell">
+                          <img class="av sm" [src]="d.user.avatar_url" [alt]="d.user.name" onerror="this.style.display='none'"/>
+                          {{ d.user.name }}
+                        </div>
+                      </td>
+                      <td class="dt">{{ formatDateTime(d.created_at) }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- ══════════════════════════════════════════════════
+           TAB: MEMBERS
+      ═══════════════════════════════════════════════════ -->
+      @if (activeTab === 'members') {
+        <div>
+          <div class="search-inline">
+            <input type="text" placeholder="Search members…" [(ngModel)]="memberSearch"/>
+          </div>
+          <div class="members-grid">
+            @for (m of filteredMembers; track m.id) {
+              <div class="member-card">
+                <img class="av lg" [src]="m.avatar_url" [alt]="m.name"
+                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+                <div class="av-f lg" style="display:none;">{{ initials(m.name) }}</div>
+                <div class="member-card-name">{{ m.name }}</div>
+                <div class="member-card-user">@{{ m.username }}</div>
+                <span class="role" [ngClass]="accessClass(m.access_level)">{{ accessLabel(m.access_level) }}</span>
+                @if (m.expires_at) {
+                  <div class="member-card-exp">expires: {{ formatDate(m.expires_at) }}</div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+    </div>
+  }
+
+</div>
