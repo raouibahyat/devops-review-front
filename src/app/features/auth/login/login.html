@@ -1,75 +1,177 @@
 <div class="login-page">
-  <!-- Grid background -->
-  <div class="grid-bg"></div>
+  <div class="dots-bg"></div>
 
-  <!-- Robot / AI illustration side -->
-  <div class="robot-side">
-    <div class="robot-circle">
-      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-        <!-- Head -->
-        <rect x="30" y="25" width="60" height="50" rx="10" fill="#141e2e" stroke="#00d68f" stroke-width="1.5"/>
-        <!-- Eyes -->
-        <circle cx="47" cy="47" r="7" fill="#111" stroke="#378ADD" stroke-width="1.5"/>
-        <circle cx="73" cy="47" r="7" fill="#111" stroke="#7F77DD" stroke-width="1.5"/>
-        <circle cx="47" cy="47" r="3" fill="#378ADD"/>
-        <circle cx="73" cy="47" r="3" fill="#7F77DD"/>
-        <!-- Mouth grill -->
-        <rect x="40" y="60" width="40" height="8" rx="3" fill="#1e3a5f"/>
-        <line x1="50" y1="60" x2="50" y2="68" stroke="#00d68f" stroke-width="0.8"/>
-        <line x1="60" y1="60" x2="60" y2="68" stroke="#00d68f" stroke-width="0.8"/>
-        <line x1="70" y1="60" x2="70" y2="68" stroke="#00d68f" stroke-width="0.8"/>
-        <!-- Antenna -->
-        <line x1="60" y1="25" x2="60" y2="12" stroke="#00d68f" stroke-width="1.5"/>
-        <circle cx="60" cy="10" r="3" fill="#00d68f"/>
-        <!-- Body -->
-        <rect x="38" y="75" width="44" height="30" rx="6" fill="#141e2e" stroke="#1e3a5f" stroke-width="1"/>
-        <circle cx="60" cy="90" r="6" fill="#1e3a5f" stroke="#00d68f" stroke-width="1"/>
-        <!-- Arms -->
-        <rect x="20" y="78" width="18" height="10" rx="4" fill="#141e2e" stroke="#1e3a5f" stroke-width="1"/>
-        <rect x="82" y="78" width="18" height="10" rx="4" fill="#141e2e" stroke="#1e3a5f" stroke-width="1"/>
-      </svg>
-    </div>
-    <div class="status-row">
-      <span class="dot green"></span><span>READY</span>
-      <span class="dot blue"></span><span>NEW_USER</span>
-    </div>
-    <div class="brand-text">DevOps<br/><span>Review AI</span></div>
-  </div>
+  <div class="login-card">
+    <div class="top-accent"></div>
 
-  <!-- Form side -->
-  <div class="form-card">
-    <div class="form-header">
-      <div class="logo-badge">CR</div>
-      <div>
-        <div class="logo-title"><strong>Code</strong>Review <span class="accent">AI</span></div>
-        <div class="secure-badge"><span class="dot-sm green"></span> SECURE</div>
+    <!-- Success overlay -->
+    <div class="success-overlay" *ngIf="loginSuccess()">
+      <div class="success-ring">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a78bfa"
+             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <div class="success-txt">ACCÈS AUTORISÉ</div>
+    </div>
+
+    <!-- ── LEFT — Robot panel ── -->
+    <div class="robot-panel">
+      <div class="robot-wrap">
+        <div class="robot-glow"></div>
+        <svg class="robot-svg" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="70" cy="70" r="62" fill="#0a0d14" stroke="rgba(139,92,246,.18)" stroke-width="1"/>
+          <line x1="70" y1="24" x2="70" y2="13" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="70" cy="11" r="2.5" fill="#a78bfa"/>
+          <circle cx="70" cy="11" r="4.5" fill="none" stroke="rgba(167,139,250,.25)" stroke-width="1">
+            <animate attributeName="r" values="4.5;7;4.5" dur="2s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="1;0;1" dur="2s" repeatCount="indefinite"/>
+          </circle>
+          <rect x="40" y="24" width="60" height="44" rx="11" fill="#13161f" stroke="rgba(139,92,246,.38)" stroke-width="1.5"/>
+          <rect x="49" y="35" width="17" height="11" rx="4" fill="#080b12" stroke="rgba(99,102,241,.45)" stroke-width="1"/>
+          <rect x="53" y="38" width="5" height="5" rx="1.5" fill="#6366f1">
+            <animate attributeName="opacity" values="1;0.2;1" dur="3s" repeatCount="indefinite"/>
+          </rect>
+          <rect x="74" y="35" width="17" height="11" rx="4" fill="#080b12" stroke="rgba(167,139,250,.45)" stroke-width="1"/>
+          <rect x="82" y="38" width="5" height="5" rx="1.5" fill="#a78bfa">
+            <animate attributeName="opacity" values="1;0.2;1" dur="2.3s" repeatCount="indefinite"/>
+          </rect>
+          <rect x="49" y="50" width="42" height="1.5" rx="1" fill="rgba(99,102,241,.5)">
+            <animateTransform attributeName="transform" type="translate" values="0,0;0,-10;0,0" dur="2s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+          </rect>
+          <rect x="49" y="55" width="42" height="7" rx="3" fill="#0a0d14" stroke="rgba(139,92,246,.28)" stroke-width="1"/>
+          <rect x="53" y="57" width="5" height="2" rx="1" fill="#7c3aed"/>
+          <rect x="61" y="57" width="5" height="2" rx="1" fill="rgba(124,58,237,.4)"/>
+          <rect x="69" y="57" width="5" height="2" rx="1" fill="#7c3aed"/>
+          <rect x="77" y="57" width="5" height="2" rx="1" fill="rgba(124,58,237,.4)"/>
+          <rect x="63" y="68" width="14" height="7" rx="2" fill="#13161f" stroke="rgba(139,92,246,.25)" stroke-width="1"/>
+          <rect x="32" y="75" width="76" height="42" rx="11" fill="#13161f" stroke="rgba(139,92,246,.28)" stroke-width="1.5"/>
+          <rect x="43" y="82" width="54" height="26" rx="5" fill="#080b12" stroke="rgba(139,92,246,.18)" stroke-width="1"/>
+          <rect x="49" y="87" width="32" height="2.5" rx="1.2" fill="rgba(99,102,241,.18)"/>
+          <rect x="49" y="87" width="20" height="2.5" rx="1.2" fill="#6366f1">
+            <animate attributeName="width" values="10;32;10" dur="2.5s" repeatCount="indefinite"/>
+          </rect>
+          <rect x="49" y="93" width="38" height="2.5" rx="1.2" fill="rgba(167,139,250,.15)"/>
+          <rect x="49" y="93" width="26" height="2.5" rx="1.2" fill="#a78bfa">
+            <animate attributeName="width" values="38;14;38" dur="1.8s" repeatCount="indefinite"/>
+          </rect>
+          <rect x="49" y="99" width="20" height="2.5" rx="1.2" fill="rgba(52,211,153,.15)"/>
+          <rect x="49" y="99" width="13" height="2.5" rx="1.2" fill="#34d399">
+            <animate attributeName="width" values="5;20;5" dur="3.2s" repeatCount="indefinite"/>
+          </rect>
+          <rect x="10"  y="79" width="22" height="10" rx="5" fill="#13161f" stroke="rgba(139,92,246,.25)" stroke-width="1"/>
+          <rect x="108" y="79" width="22" height="10" rx="5" fill="#13161f" stroke="rgba(139,92,246,.25)" stroke-width="1"/>
+          <rect x="9"   y="89" width="13" height="13" rx="4" fill="#13161f" stroke="rgba(139,92,246,.2)" stroke-width="1"/>
+          <rect x="118" y="89" width="13" height="13" rx="4" fill="#13161f" stroke="rgba(139,92,246,.2)" stroke-width="1"/>
+          <rect x="46"  y="117" width="16" height="9" rx="4" fill="#13161f" stroke="rgba(139,92,246,.2)" stroke-width="1"/>
+          <rect x="78"  y="117" width="16" height="9" rx="4" fill="#13161f" stroke="rgba(139,92,246,.2)" stroke-width="1"/>
+        </svg>
+      </div>
+
+      <div class="status-chips">
+        <div class="chip chip-green"><span class="chip-dot green"></span>ONLINE</div>
+        <div class="chip"><span class="chip-dot"></span>AUTO</div>
+      </div>
+
+      <div class="brand-block">
+        <h2 class="brand-title">Offline<br/><span>Review</span></h2>
+        <p class="brand-caption">Pipeline d'automatisation<br/>de revue de code</p>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="stat-n">248</div>
+          <div class="stat-l">Revues</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-n">99%</div>
+          <div class="stat-l">Uptime</div>
+        </div>
       </div>
     </div>
 
-    <p class="sub">Connexion à votre espace DevOps</p>
+    <!-- ── RIGHT — Form ── -->
+    <div class="form-panel">
+      <div class="brand-row">
+        <div class="brand-badge">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#a78bfa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 17l10 5 10-5" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 12l10 5 10-5" stroke="rgba(167,139,250,.5)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-name">Offline <span class="accent">Review</span></div>
+          <div class="brand-ver">v2.4.1 · workspace</div>
+        </div>
+      </div>
 
-    <div class="field">
-      <label class="cyber-label">Nom d'utilisateur</label>
-      <input class="cyber-input" type="text" placeholder="john_dev"
-             [(ngModel)]="username" [ngModel]="username()" (ngModelChange)="username.set($event)"/>
+      <h1 class="form-title">Bienvenue</h1>
+      <p class="form-sub">Accédez à votre pipeline de revue automatisée.</p>
+
+      @if (error()) {
+        <div class="error-msg">{{ error() }}</div>
+      }
+
+      <div class="field">
+        <label class="field-label">Identifiant</label>
+        <input class="field-input" type="text" placeholder="votre.identifiant"
+               autocomplete="username"
+               [value]="username()"
+               (input)="username.set($any($event.target).value)"/>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Mot de passe</label>
+        <div class="pwd-wrap">
+          <input class="field-input" [type]="showPassword() ? 'text' : 'password'"
+                 placeholder="••••••••••"
+                 autocomplete="current-password"
+                 [value]="password()"
+                 (input)="password.set($any($event.target).value)"/>
+          <button class="eye-btn" type="button" (click)="showPassword.set(!showPassword())">
+            <svg *ngIf="!showPassword()" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <svg *ngIf="showPassword()" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/>
+              <line x1="1" y1="1" x2="23" y2="23"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="opts-row">
+        <label class="check-label">
+          <input type="checkbox" [(ngModel)]="rememberMe"/> Se souvenir de moi
+        </label>
+        <a class="forgot-link" href="#">Mot de passe oublié ?</a>
+      </div>
+
+      <button class="submit-btn" (click)="onSubmit()" [disabled]="loading()" [class.is-loading]="loading()">
+        <span class="btn-spinner" *ngIf="loading()"></span>
+        <span>{{ loading() ? 'Vérification...' : 'Se connecter' }}</span>
+        <svg *ngIf="!loading()" class="btn-arrow" width="15" height="15" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </button>
+
+      <div class="separator">
+        <div class="sep-line"></div>
+        <span class="sep-text">ou</span>
+        <div class="sep-line"></div>
+      </div>
+
+      <p class="signup-row">
+        Pas encore de compte ?
+        <a routerLink="/auth/register" class="signup-link">Créer un accès</a>
+      </p>
     </div>
-
-    <div class="field">
-      <label class="cyber-label">Mot de passe</label>
-      <input class="cyber-input" type="password" placeholder="••••••••"
-             [(ngModel)]="password" [ngModel]="password()" (ngModelChange)="password.set($event)"/>
-    </div>
-
-    @if (error()) {
-      <div class="error-msg">{{ error() }}</div>
-    }
-
-    <button class="btn-accent" (click)="onSubmit()" [disabled]="loading()">
-      {{ loading() ? 'Connexion...' : 'Se connecter →' }}
-    </button>
-
-    <a class="link" routerLink="/auth/register">
-      Pas de compte ? <span>S'inscrire</span>
-    </a>
   </div>
 </div>
