@@ -4,18 +4,20 @@
   <div class="login-card">
     <div class="top-accent"></div>
 
-    <!-- Success overlay -->
-    <div class="success-overlay" *ngIf="loginSuccess()">
-      <div class="success-ring">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a78bfa"
-             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12"/>
-        </svg>
+    <!-- Success Overlay -->
+    @if (loginSuccess()) {
+      <div class="success-overlay">
+        <div class="success-ring">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <div class="success-txt">ACCÈS AUTORISÉ</div>
+        <div class="success-sub">Redirection vers le tableau de bord...</div>
       </div>
-      <div class="success-txt">ACCÈS AUTORISÉ</div>
-    </div>
+    }
 
-    <!-- ── LEFT — Robot panel ── -->
+    <!-- LEFT - Robot Panel -->
     <div class="robot-panel">
       <div class="robot-wrap">
         <div class="robot-glow"></div>
@@ -60,18 +62,22 @@
           <rect x="49" y="99" width="13" height="2.5" rx="1.2" fill="#34d399">
             <animate attributeName="width" values="5;20;5" dur="3.2s" repeatCount="indefinite"/>
           </rect>
-          <rect x="10"  y="79" width="22" height="10" rx="5" fill="#13161f" stroke="rgba(139,92,246,.25)" stroke-width="1"/>
+          <rect x="10" y="79" width="22" height="10" rx="5" fill="#13161f" stroke="rgba(139,92,246,.25)" stroke-width="1"/>
           <rect x="108" y="79" width="22" height="10" rx="5" fill="#13161f" stroke="rgba(139,92,246,.25)" stroke-width="1"/>
-          <rect x="9"   y="89" width="13" height="13" rx="4" fill="#13161f" stroke="rgba(139,92,246,.2)" stroke-width="1"/>
+          <rect x="9" y="89" width="13" height="13" rx="4" fill="#13161f" stroke="rgba(139,92,246,.2)" stroke-width="1"/>
           <rect x="118" y="89" width="13" height="13" rx="4" fill="#13161f" stroke="rgba(139,92,246,.2)" stroke-width="1"/>
-          <rect x="46"  y="117" width="16" height="9" rx="4" fill="#13161f" stroke="rgba(139,92,246,.2)" stroke-width="1"/>
-          <rect x="78"  y="117" width="16" height="9" rx="4" fill="#13161f" stroke="rgba(139,92,246,.2)" stroke-width="1"/>
+          <rect x="46" y="117" width="16" height="9" rx="4" fill="#13161f" stroke="rgba(139,92,246,.2)" stroke-width="1"/>
+          <rect x="78" y="117" width="16" height="9" rx="4" fill="#13161f" stroke="rgba(139,92,246,.2)" stroke-width="1"/>
         </svg>
       </div>
 
       <div class="status-chips">
-        <div class="chip chip-green"><span class="chip-dot green"></span>ONLINE</div>
-        <div class="chip"><span class="chip-dot"></span>AUTO</div>
+        <div class="chip chip-green">
+          <span class="chip-dot green"></span>ONLINE
+        </div>
+        <div class="chip">
+          <span class="chip-dot"></span>AUTO
+        </div>
       </div>
 
       <div class="brand-block">
@@ -91,14 +97,14 @@
       </div>
     </div>
 
-    <!-- ── RIGHT — Form ── -->
+    <!-- RIGHT - Form Panel -->
     <div class="form-panel">
       <div class="brand-row">
         <div class="brand-badge">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-            <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#a78bfa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M2 17l10 5 10-5" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M2 12l10 5 10-5" stroke="rgba(167,139,250,.5)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#a78bfa" stroke-width="1.5"/>
+            <path d="M2 17l10 5 10-5" stroke="#7c3aed" stroke-width="1.5"/>
+            <path d="M2 12l10 5 10-5" stroke="rgba(167,139,250,.5)" stroke-width="1.5"/>
           </svg>
         </div>
         <div>
@@ -111,55 +117,87 @@
       <p class="form-sub">Accédez à votre pipeline de revue automatisée.</p>
 
       @if (error()) {
-        <div class="error-msg">{{ error() }}</div>
+        <div class="error-msg">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          {{ error() }}
+          <button class="error-close" (click)="clearError()">✕</button>
+        </div>
       }
 
+      <!-- Username Field -->
       <div class="field">
-        <label class="field-label">Identifiant</label>
-        <input class="field-input" type="text" placeholder="votre.identifiant"
+        <label class="field-label">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          Identifiant
+        </label>
+        <input class="field-input" 
+               type="text" 
+               placeholder="votre.identifiant"
                autocomplete="username"
                [value]="username()"
                (input)="username.set($any($event.target).value)"/>
       </div>
 
+      <!-- Password Field -->
       <div class="field">
-        <label class="field-label">Mot de passe</label>
+        <label class="field-label">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          Mot de passe
+        </label>
         <div class="pwd-wrap">
-          <input class="field-input" [type]="showPassword() ? 'text' : 'password'"
+          <input class="field-input" 
+                 [type]="showPassword() ? 'text' : 'password'"
                  placeholder="••••••••••"
                  autocomplete="current-password"
                  [value]="password()"
                  (input)="password.set($any($event.target).value)"/>
           <button class="eye-btn" type="button" (click)="showPassword.set(!showPassword())">
-            <svg *ngIf="!showPassword()" width="15" height="15" viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-              <circle cx="12" cy="12" r="3"/>
-            </svg>
-            <svg *ngIf="showPassword()" width="15" height="15" viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/>
-              <line x1="1" y1="1" x2="23" y2="23"/>
-            </svg>
+            @if (!showPassword()) {
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            } @else {
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            }
           </button>
         </div>
       </div>
 
+      <!-- Options Row -->
       <div class="opts-row">
         <label class="check-label">
-          <input type="checkbox" [(ngModel)]="rememberMe"/> Se souvenir de moi
+          <input type="checkbox" [(ngModel)]="rememberMe"/> 
+          <span>Se souvenir de moi</span>
         </label>
         <a class="forgot-link" href="#">Mot de passe oublié ?</a>
       </div>
 
+      <!-- Submit Button -->
       <button class="submit-btn" (click)="onSubmit()" [disabled]="loading()" [class.is-loading]="loading()">
-        <span class="btn-spinner" *ngIf="loading()"></span>
-        <span>{{ loading() ? 'Vérification...' : 'Se connecter' }}</span>
-        <svg *ngIf="!loading()" class="btn-arrow" width="15" height="15" viewBox="0 0 24 24"
-             fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"/>
-          <polyline points="12 5 19 12 12 19"/>
-        </svg>
+        @if (loading()) {
+          <span class="btn-spinner"></span>
+          <span>Vérification...</span>
+        } @else {
+          <span>Se connecter</span>
+          <svg class="btn-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        }
       </button>
 
       <div class="separator">

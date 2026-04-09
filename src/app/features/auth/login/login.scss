@@ -2,21 +2,19 @@
 // LOGIN PAGE — Offline Review · v4
 // =============================================
 
-// ── Variables ───────────────────────────────
-$accent:        #7c3aed;
-$accent-light:  #a78bfa;
-$accent-dim:    rgba(139, 92, 246, .1);
-$accent-border: rgba(139, 92, 246, .2);
-$bg-page:       #080b12;
-$bg-card:       #0e1117;
-$bg-left:       #0a0d14;
-$bg-surface:    #13161f;
-$text-primary:  #f1f5f9;
-$text-muted:    #334155;
-$text-faint:    #1e293b;
-$border-soft:   rgba(139, 92, 246, .15);
+$accent: #7c3aed;
+$accent-light: #a78bfa;
+$accent-dim: rgba(139, 92, 246, 0.1);
+$accent-border: rgba(139, 92, 246, 0.2);
+$bg-page: #080b12;
+$bg-card: #0e1117;
+$bg-left: #0a0d14;
+$bg-surface: #13161f;
+$text-primary: #f1f5f9;
+$text-muted: #64748b;
+$text-faint: #334155;
+$border-soft: rgba(139, 92, 246, 0.15);
 
-// ── Page ────────────────────────────────────
 .login-page {
   min-height: 100vh;
   display: flex;
@@ -26,19 +24,19 @@ $border-soft:   rgba(139, 92, 246, .15);
   background: $bg-page;
   position: relative;
   overflow: hidden;
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: "Inter", system-ui, sans-serif;
 }
 
 .dots-bg {
   position: fixed;
   inset: 0;
-  background-image: radial-gradient(circle, rgba(139, 92, 246, .06) 1px, transparent 1px);
+  background-image: radial-gradient(circle, rgba(139, 92, 246, 0.06) 1px, transparent 1px);
   background-size: 26px 26px;
   pointer-events: none;
   z-index: 0;
 }
 
-// ── Card (one piece) ────────────────────────
+// Card
 .login-card {
   position: relative;
   z-index: 10;
@@ -49,32 +47,50 @@ $border-soft:   rgba(139, 92, 246, .15);
   border: 1px solid $accent-border;
   border-radius: 20px;
   overflow: hidden;
-  animation: cardIn .7s cubic-bezier(.34, 1.2, .64, 1) both;
+  animation: cardIn 0.7s cubic-bezier(0.34, 1.2, 0.64, 1) both;
 
   @media (max-width: 640px) {
     flex-direction: column;
-    .robot-panel { width: 100%; border-right: none; border-bottom: 1px solid $border-soft; }
+
+    .robot-panel {
+      width: 100%;
+      border-right: none;
+      border-bottom: 1px solid $border-soft;
+    }
   }
 }
 
 @keyframes cardIn {
-  from { opacity: 0; transform: translateY(18px) scale(.98); }
-  to   { opacity: 1; transform: none; }
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
-// Top glow line
+// Top accent line
 .top-accent {
   position: absolute;
-  top: 0; left: 35%; right: 0;
+  top: 0;
+  left: 35%;
+  right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(139, 92, 246, .65), transparent);
+  background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.65), transparent);
   animation: topGlow 3s ease-in-out infinite;
   z-index: 1;
 }
 
 @keyframes topGlow {
-  0%, 100% { opacity: .3; }
-  50%       { opacity: 1;  }
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 // Success overlay
@@ -82,13 +98,13 @@ $border-soft:   rgba(139, 92, 246, .15);
   position: absolute;
   inset: 0;
   border-radius: 20px;
-  background: rgba(8, 11, 18, .96);
+  background: rgba(8, 11, 18, 0.96);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  animation: fadeIn .3s both;
+  animation: fadeIn 0.3s both;
   z-index: 30;
 }
 
@@ -100,22 +116,24 @@ $border-soft:   rgba(139, 92, 246, .15);
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: popIn .5s .2s cubic-bezier(.34, 1.56, .64, 1) both;
+  animation: popIn 0.5s 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
 .success-txt {
   font-size: 11px;
-  letter-spacing: .12em;
+  letter-spacing: 0.12em;
   color: $accent-light;
-  font-family: 'JetBrains Mono', monospace;
-  animation: fadeUp .4s .4s both;
+  font-family: "JetBrains Mono", monospace;
+  animation: fadeUp 0.4s 0.4s both;
 }
 
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes popIn  { from { opacity: 0; transform: scale(0); } to { opacity: 1; transform: scale(1); } }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.success-sub {
+  font-size: 10px;
+  color: $text-muted;
+  animation: fadeUp 0.4s 0.6s both;
+}
 
-// ── LEFT — Robot panel ───────────────────────
+// LEFT - Robot Panel
 .robot-panel {
   width: 220px;
   flex-shrink: 0;
@@ -139,19 +157,26 @@ $border-soft:   rgba(139, 92, 246, .15);
   position: absolute;
   inset: -14px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(139, 92, 246, .14) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.14) 0%, transparent 70%);
   animation: robotGlow 3s ease-in-out infinite;
 }
 
 @keyframes robotGlow {
-  0%, 100% { transform: scale(1);    opacity: .6; }
-  50%       { transform: scale(1.1); opacity: 1;  }
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
 }
 
 .robot-svg {
   width: 110px;
   height: 110px;
-  filter: drop-shadow(0 0 10px rgba(139, 92, 246, .2));
+  filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.2));
 }
 
 // Chips
@@ -169,8 +194,15 @@ $border-soft:   rgba(139, 92, 246, .15);
   border-radius: 20px;
   padding: 3px 8px;
   font-size: 10px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: "JetBrains Mono", monospace;
   color: $accent-light;
+
+  &.chip-green {
+    .chip-dot.green {
+      background: #34d399;
+      animation: pulseDotGreen 1.5s ease-in-out infinite;
+    }
+  }
 }
 
 .chip-dot {
@@ -182,31 +214,53 @@ $border-soft:   rgba(139, 92, 246, .15);
 
   &.green {
     background: #34d399;
-    animation: pulseDotGreen 1.5s ease-in-out infinite;
   }
 }
 
-@keyframes pulseDot      { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
-@keyframes pulseDotGreen { 0%, 100% { opacity: 1; box-shadow: 0 0 3px #34d399; } 50% { opacity: .4; box-shadow: none; } }
+@keyframes pulseDot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes pulseDotGreen {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 3px #34d399;
+  }
+  50% {
+    opacity: 0.4;
+    box-shadow: none;
+  }
+}
 
 // Brand text
-.brand-block { text-align: center; }
+.brand-block {
+  text-align: center;
+}
 
 .brand-title {
   font-size: 17px;
   font-weight: 700;
   color: $text-primary;
-  letter-spacing: -.02em;
+  letter-spacing: -0.02em;
   line-height: 1.25;
   margin-bottom: 5px;
 
-  span { color: $accent-light; }
+  span {
+    color: $accent-light;
+  }
 }
 
 .brand-caption {
   font-size: 10px;
   color: $text-muted;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: "JetBrains Mono", monospace;
   line-height: 1.7;
 }
 
@@ -230,17 +284,17 @@ $border-soft:   rgba(139, 92, 246, .15);
   font-size: 15px;
   font-weight: 700;
   color: $accent-light;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: "JetBrains Mono", monospace;
 }
 
 .stat-l {
   font-size: 9px;
   color: $text-muted;
   margin-top: 1px;
-  letter-spacing: .04em;
+  letter-spacing: 0.04em;
 }
 
-// ── RIGHT — Form panel ───────────────────────
+// RIGHT - Form Panel
 .form-panel {
   flex: 1;
   display: flex;
@@ -274,13 +328,15 @@ $border-soft:   rgba(139, 92, 246, .15);
   font-weight: 600;
   color: #e2e8f0;
 
-  .accent { color: $accent-light; }
+  .accent {
+    color: $accent-light;
+  }
 }
 
 .brand-ver {
   font-size: 9px;
   color: $text-faint;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: "JetBrains Mono", monospace;
   margin-top: 1px;
 }
 
@@ -289,7 +345,7 @@ $border-soft:   rgba(139, 92, 246, .15);
   font-size: 21px;
   font-weight: 700;
   color: $text-primary;
-  letter-spacing: -.025em;
+  letter-spacing: -0.025em;
   margin-bottom: 3px;
 }
 
@@ -300,27 +356,48 @@ $border-soft:   rgba(139, 92, 246, .15);
   line-height: 1.55;
 }
 
-// Error
+// Error message
 .error-msg {
-  background: rgba(239, 68, 68, .08);
-  border: 1px solid rgba(239, 68, 68, .2);
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
   border-radius: 8px;
   padding: 8px 12px;
   font-size: 11px;
   color: #f87171;
-  margin-bottom: .75rem;
-  font-family: 'JetBrains Mono', monospace;
-  animation: fadeUp .3s both;
+  margin-bottom: 0.75rem;
+  font-family: "JetBrains Mono", monospace;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: fadeUp 0.3s both;
+
+  .error-close {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: #f87171;
+    cursor: pointer;
+    font-size: 12px;
+    opacity: 0.7;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
 }
 
 // Fields
-.field { margin-bottom: .75rem; }
+.field {
+  margin-bottom: 0.75rem;
+}
 
 .field-label {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 5px;
   font-size: 10px;
   font-weight: 600;
-  letter-spacing: .08em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: $text-faint;
   margin-bottom: 5px;
@@ -334,22 +411,26 @@ $border-soft:   rgba(139, 92, 246, .15);
   padding: 11px 14px;
   color: #e2e8f0;
   font-size: 13px;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   outline: none;
-  transition: border-color .2s, box-shadow .2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 
-  &::placeholder { color: $text-faint; }
+  &::placeholder {
+    color: $text-faint;
+  }
 
   &:focus {
-    border-color: rgba(139, 92, 246, .45);
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, .09);
+    border-color: rgba(139, 92, 246, 0.45);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.09);
   }
 }
 
 .pwd-wrap {
   position: relative;
 
-  .field-input { padding-right: 40px; }
+  .field-input {
+    padding-right: 40px;
+  }
 }
 
 .eye-btn {
@@ -364,9 +445,11 @@ $border-soft:   rgba(139, 92, 246, .15);
   display: flex;
   align-items: center;
   padding: 4px;
-  transition: color .2s;
+  transition: color 0.2s;
 
-  &:hover { color: $accent-light; }
+  &:hover {
+    color: $accent-light;
+  }
 }
 
 // Options row
@@ -374,7 +457,7 @@ $border-soft:   rgba(139, 92, 246, .15);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: .5rem 0 1rem;
+  margin: 0.5rem 0 1rem;
 }
 
 .check-label {
@@ -384,29 +467,29 @@ $border-soft:   rgba(139, 92, 246, .15);
   font-size: 11px;
   color: $text-muted;
   cursor: pointer;
-  user-select: none;
 
-  input[type=checkbox] {
+  input[type="checkbox"] {
     appearance: none;
-    width: 13px;
-    height: 13px;
+    width: 14px;
+    height: 14px;
     border: 1px solid $text-faint;
     border-radius: 3px;
     background: transparent;
     cursor: pointer;
     position: relative;
-    transition: all .2s;
-    flex-shrink: 0;
+    transition: all 0.2s;
 
     &:checked {
       background: $accent;
       border-color: $accent;
 
       &::after {
-        content: '';
+        content: "";
         position: absolute;
-        top: 1px; left: 4px;
-        width: 4px; height: 6px;
+        top: 1px;
+        left: 4px;
+        width: 4px;
+        height: 7px;
         border: 2px solid #fff;
         border-top: none;
         border-left: none;
@@ -420,9 +503,11 @@ $border-soft:   rgba(139, 92, 246, .15);
   font-size: 11px;
   color: $text-faint;
   text-decoration: none;
-  transition: color .2s;
+  transition: color 0.2s;
 
-  &:hover { color: $accent-light; }
+  &:hover {
+    color: $accent-light;
+  }
 }
 
 // Submit button
@@ -440,56 +525,80 @@ $border-soft:   rgba(139, 92, 246, .15);
   align-items: center;
   justify-content: center;
   gap: 7px;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   position: relative;
   overflow: hidden;
-  transition: background .2s, transform .2s, box-shadow .2s;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(255, 255, 255, .1), transparent);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
   }
 
   &:hover:not(:disabled) {
     background: #6d28d9;
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(124, 58, 237, .35);
+    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.35);
   }
 
-  &:active:not(:disabled) { transform: none; box-shadow: none; }
+  &:active:not(:disabled) {
+    transform: none;
+    box-shadow: none;
+  }
 
-  &:disabled, &.is-loading { opacity: .55; cursor: not-allowed; }
+  &:disabled,
+  &.is-loading {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
 
-  .btn-arrow { transition: transform .2s; }
-  &:hover .btn-arrow { transform: translateX(3px); }
+  .btn-arrow {
+    transition: transform 0.2s;
+  }
+
+  &:hover .btn-arrow {
+    transform: translateX(3px);
+  }
 }
 
 .btn-spinner {
   display: inline-block;
   width: 13px;
   height: 13px;
-  border: 2px solid rgba(255, 255, 255, .25);
+  border: 2px solid rgba(255, 255, 255, 0.25);
   border-top-color: #fff;
   border-radius: 50%;
-  animation: spin .6s linear infinite;
+  animation: spin 0.6s linear infinite;
 }
 
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 // Separator
 .separator {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: .9rem 0;
+  margin: 0.9rem 0;
 }
 
-.sep-line { flex: 1; height: 1px; background: #0f172a; }
-.sep-text  { font-size: 10px; color: $text-faint; }
+.sep-line {
+  flex: 1;
+  height: 1px;
+  background: #0f172a;
+}
 
-// Signup
+.sep-text {
+  font-size: 10px;
+  color: $text-faint;
+}
+
+// Signup link
 .signup-row {
   text-align: center;
   font-size: 11px;
@@ -500,7 +609,113 @@ $border-soft:   rgba(139, 92, 246, .15);
   color: $accent-light;
   text-decoration: none;
   font-weight: 500;
-  transition: opacity .2s;
+  transition: opacity 0.2s;
 
-  &:hover { opacity: .75; text-decoration: underline; }
+  &:hover {
+    opacity: 0.75;
+    text-decoration: underline;
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// Responsive
+@media (max-width: 640px) {
+  .login-card {
+    max-width: 95%;
+  }
+
+  .form-panel {
+    padding: 1.5rem;
+  }
+
+  .form-title {
+    font-size: 18px;
+  }
+
+  .robot-panel {
+    padding: 1.25rem;
+    flex-direction: row;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+
+    .robot-wrap {
+      width: 70px;
+      height: 70px;
+    }
+
+    .robot-svg {
+      width: 70px;
+      height: 70px;
+    }
+
+    .brand-block {
+      .brand-title {
+        font-size: 14px;
+      }
+      .brand-caption {
+        font-size: 8px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .login-page {
+    padding: 0.75rem;
+  }
+
+  .form-panel {
+    padding: 1rem;
+  }
+
+  .brand-row {
+    margin-bottom: 1rem;
+  }
+
+  .form-sub {
+    font-size: 11px;
+  }
+
+  .field-input {
+    padding: 9px 12px;
+    font-size: 12px;
+  }
+
+  .opts-row {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
 }

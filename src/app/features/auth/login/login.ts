@@ -9,16 +9,16 @@ import { Auth } from '../../../core/services/auth';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './login.html',
-  styleUrls: ['./login.scss'],
+  styleUrls: ['./login.scss']
 })
 export class LoginComponent {
-  username     = signal('');
-  password     = signal('');
-  loading      = signal(false);
-  error        = signal('');
+  username = signal('');
+  password = signal('');
+  loading = signal(false);
+  error = signal('');
   showPassword = signal(false);
   loginSuccess = signal(false);
-  rememberMe   = false;
+  rememberMe = false;
 
   constructor(private auth: Auth, private router: Router) {}
 
@@ -27,16 +27,26 @@ export class LoginComponent {
       this.error.set('Veuillez remplir tous les champs.');
       return;
     }
+    
     this.loading.set(true);
     this.error.set('');
+    
     try {
       await this.auth.login(this.username(), this.password());
       this.loginSuccess.set(true);
-      setTimeout(() => this.router.navigate(['/dashboard']), 1500);
+      
+      // Redirection après 1.5 secondes
+      setTimeout(() => {
+        this.router.navigate(['/dashboard']);
+      }, 1500);
     } catch (e: any) {
       this.error.set(e.message || 'Identifiants incorrects.');
     } finally {
       this.loading.set(false);
     }
+  }
+
+  clearError() {
+    this.error.set('');
   }
 }
